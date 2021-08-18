@@ -9,6 +9,13 @@ from impacket.dcerpc.v5 import srvs
 from impacket.smbconnection import SessionError, SMBConnection
 
 
+def removeprefix(self: str, prefix: str) -> str:
+    if self.startswith(prefix):
+        return self[len(prefix) :]
+    else:
+        return self[:]
+
+
 class STypes(IntFlag):
     """Share Types"""
 
@@ -87,7 +94,7 @@ def list_shares(argbundle):
                         # value is 0, which IntFlag doesn't look for. This
                         # adds the 0 flag (DISKTREE) iff there's a masked
                         # value.
-                        "type": str(STypes(share["shi1_type"])).removeprefix("STypes.")
+                        "type": removeprefix(str(STypes(share["shi1_type"])), "STypes.")
                         + (
                             "|DISKTREE"
                             if STypes(share["shi1_type"]) & srvs.STYPE_MASK == 0
